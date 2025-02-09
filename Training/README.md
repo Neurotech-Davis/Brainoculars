@@ -7,14 +7,13 @@ This directory contains files related to training data.
 
 ### Dependencies
 You will need the following modules to properly collect data. Check if 
-they are installed by running the below line in your terminal
-'''pip list'''
+they are installed by running ```pip list``` in your terminal.
 If the libraries are not installed, run the commands following them
 * BrainFlow
-    - '''pip install brainflow'''
+    - ```pip install brainflow```
 * Keyboard
-    - '''pip install keyboard'''
+    - ```pip install keyboard```
 * PySerial
-    - '''pip install pyserial'''
+    - ```pip install pyserial```
 
 You will also need PyschoPy to display the stimuli.
