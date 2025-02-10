@@ -83,7 +83,7 @@ def main():
 
         # Wait until Key-Press to Trigger Timer for Data Collection
         # The Stimuli File will Also be Triggered Independently with this Same Key-Press
-        print("Hit \"space\" to begin stimuli and data collection")
+        print("Hit \"space\" to begin stimuli and data collection. Make sure to have the stimuli in focus.")
         keyboard.wait("space")
         time.sleep(expected_wait_time)
 
