@@ -40,7 +40,7 @@ deviceManager = hardware.DeviceManager()
 _thisDir = os.path.dirname(os.path.abspath(__file__))
 # store info about the experiment session
 psychopyVersion = '2024.2.4'
-expName = 'seizuremachine'  # from the Builder filename that created this script
+expName = 'backgroundstim'  # from the Builder filename that created this script
 # information about this experiment
 expInfo = {
     'participant': f"{randint(0, 999999):06.0f}",
@@ -126,7 +126,7 @@ def setupData(expInfo, dataDir=None):
     thisExp = data.ExperimentHandler(
         name=expName, version='',
         extraInfo=expInfo, runtimeInfo=None,
-        originPath='C:\\Users\\legions\\Documents\\Davis\\Neurotech Club\\NeuroVision\\seizuremachine.py',
+        originPath='..\\backgroundstim.py',
         savePickle=True, saveWideText=True,
         dataFileName=dataDir + os.sep + filename, sortColumns='time'
     )
@@ -367,62 +367,6 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
     mouse = event.Mouse(win=win)
     x, y = [None, None]
     mouse.mouseClock = core.Clock()
-    triangle1 = visual.ShapeStim(
-        win=win, name='triangle1',
-        size=(2, 2), vertices='triangle',
-        ori=0.0, pos=[0,0], draggable=True, anchor='center',
-        lineWidth=1.0,
-        colorSpace='rgb', lineColor='white', fillColor='white',
-        opacity=None, depth=-2.0, interpolate=True)
-    triangle2 = visual.ShapeStim(
-        win=win, name='triangle2',
-        size=(2,2), vertices='triangle',
-        ori=45.0, pos=[0,0], draggable=True, anchor='center',
-        lineWidth=1.0,
-        colorSpace='rgb', lineColor='white', fillColor='white',
-        opacity=None, depth=-3.0, interpolate=True)
-    triangle3 = visual.ShapeStim(
-        win=win, name='triangle3',
-        size=(2,2), vertices='triangle',
-        ori=90.0, pos=[0,0], draggable=True, anchor='center',
-        lineWidth=1.0,
-        colorSpace='rgb', lineColor='white', fillColor='white',
-        opacity=None, depth=-4.0, interpolate=True)
-    triangle4 = visual.ShapeStim(
-        win=win, name='triangle4',
-        size=(2,2), vertices='triangle',
-        ori=135.0, pos=[0,0], draggable=True, anchor='center',
-        lineWidth=1.0,
-        colorSpace='rgb', lineColor='white', fillColor='white',
-        opacity=None, depth=-5.0, interpolate=True)
-    triangle5 = visual.ShapeStim(
-        win=win, name='triangle5',
-        size=(2,2), vertices='triangle',
-        ori=180.0, pos=[0,0], draggable=True, anchor='center',
-        lineWidth=1.0,
-        colorSpace='rgb', lineColor='white', fillColor='white',
-        opacity=None, depth=-6.0, interpolate=True)
-    triangle6 = visual.ShapeStim(
-        win=win, name='triangle6',
-        size=(2,2), vertices='triangle',
-        ori=225.0, pos=[0,0], draggable=True, anchor='center',
-        lineWidth=1.0,
-        colorSpace='rgb', lineColor='white', fillColor='white',
-        opacity=None, depth=-7.0, interpolate=True)
-    triangle7 = visual.ShapeStim(
-        win=win, name='triangle7',
-        size=(2,2), vertices='triangle',
-        ori=270.0, pos=[0,0], draggable=True, anchor='center',
-        lineWidth=1.0,
-        colorSpace='rgb', lineColor='white', fillColor='white',
-        opacity=None, depth=-8.0, interpolate=True)
-    triangle8 = visual.ShapeStim(
-        win=win, name='triangle8',
-        size=(2,2), vertices='triangle',
-        ori=315.0, pos=[0,0], draggable=True, anchor='center',
-        lineWidth=1.0,
-        colorSpace='rgb', lineColor='white', fillColor='white',
-        opacity=None, depth=-9.0, interpolate=True)
     cursor = visual.ShapeStim(
         win=win, name='cursor',
         size=(0.0125, 0.0125), vertices='circle',
@@ -431,7 +375,24 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
         colorSpace='rgb', lineColor=[1.0, -1.0, -1.0], fillColor=[1.0000, -1.0000, -1.0000],
         opacity=None, depth=-10.0, interpolate=True)
         
-    triangles = [triangle1, triangle2, triangle3, triangle4, triangle5, triangle6, triangle7, triangle8]
+    triangles = []
+    width = 2 * sin(45)
+    for i in range(8):
+        triangles.append(visual.ShapeStim(win=win, name='triangle'+str(i), size=(width, 2), vertices='triangle', ori=i*45, pos=[0,0], draggable=True, anchor='top',
+        lineWidth=1.0, colorSpace='rgb', lineColor='white', fillColor='white', opacity=None, depth=-2.0, interpolate=True))
+    
+    # Make this more modular and stuff
+    def initializeStim(stim, name):
+        # keep track of start time/frame for later
+        stim.frameNStart = frameN  # exact frame index
+        stim.tStart = t  # local t and not account for scr refresh
+        stim.tStartRefresh = tThisFlipGlobal  # on global time
+        win.timeOnFlip(triangle, 'tStartRefresh')  # time at next scr refresh
+        # add timestamp to datafile
+        thisExp.timestampOnFlip(win, name + '.started')
+        # update status
+        stim.status = STARTED
+        stim.setAutoDraw(True)
     
     # create some handy timers
     
@@ -465,7 +426,7 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
     # create an object to store info about Routine trial
     trial = data.Routine(
         name='trial',
-        components=[mouse, cursor, triangle1, triangle2, triangle3, triangle4, triangle5, triangle6, triangle7, triangle8],
+        components=[mouse, cursor],
     )
     trial.status = NOT_STARTED
     continueRoutine = True
@@ -538,211 +499,26 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
         
         offset = sqrt(2)/2
         
-        # change triangle colors
+        # Update triangles
         for i, triangle in enumerate(triangles):
-            if triangle.status == STARTED:
+            # If triangle is starting
+            if triangle.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+                initializeStim(triangle, "triangle"+str(i))
+            
+            # If triangle is active
+            elif triangle.status == STARTED:
                 noiseFrame = frameN % 60
                 color = noiseSequence[i][noiseFrame][0] - 1
                 triangle.setFillColor([color, color, color], log=False)
                 triangle.setLineColor([color, color, color], log=False)
-        
-        # if triangle1 is starting this frame...
-        if triangle1.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
-            # keep track of start time/frame for later
-            triangle1.frameNStart = frameN  # exact frame index
-            triangle1.tStart = t  # local t and not account for scr refresh
-            triangle1.tStartRefresh = tThisFlipGlobal  # on global time
-            win.timeOnFlip(triangle1, 'tStartRefresh')  # time at next scr refresh
-            # add timestamp to datafile
-            thisExp.timestampOnFlip(win, 'triangle1.started')
-            # update status
-            triangle1.status = STARTED
-            triangle1.setAutoDraw(True)
-        
-        # if triangle1 is active this frame...
-        if triangle1.status == STARTED:
-            # update params
-            #color = random() - 1
-            #triangle1.setFillColor([color, color, color], log=False)
-            #triangle1.setLineColor([color, color, color], log=False)
-            triangle1.setPos((mouse.getPos()[0], mouse.getPos()[1] - 1), log=False)
-        
-        # *triangle2* updates
-        
-        # if triangle2 is starting this frame...
-        if triangle2.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
-            # keep track of start time/frame for later
-            triangle2.frameNStart = frameN  # exact frame index
-            triangle2.tStart = t  # local t and not account for scr refresh
-            triangle2.tStartRefresh = tThisFlipGlobal  # on global time
-            win.timeOnFlip(triangle2, 'tStartRefresh')  # time at next scr refresh
-            # add timestamp to datafile
-            thisExp.timestampOnFlip(win, 'triangle2.started')
-            # update status
-            triangle2.status = STARTED
-            triangle2.setAutoDraw(True)
-        
-        # if triangle2 is active this frame...
-        if triangle2.status == STARTED:
-            # update params
-            #color = random() - 1
-            #triangle2.setFillColor([color, color, color], log=False)
-            #triangle2.setLineColor([color, color, color], log=False)
-            triangle2.setPos((mouse.getPos()[0] - offset, mouse.getPos()[1] - offset), log=False)
-        
-        # *triangle3* updates
-        
-        # if triangle3 is starting this frame...
-        if triangle3.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
-            # keep track of start time/frame for later
-            triangle3.frameNStart = frameN  # exact frame index
-            triangle3.tStart = t  # local t and not account for scr refresh
-            triangle3.tStartRefresh = tThisFlipGlobal  # on global time
-            win.timeOnFlip(triangle3, 'tStartRefresh')  # time at next scr refresh
-            # add timestamp to datafile
-            thisExp.timestampOnFlip(win, 'triangle3.started')
-            # update status
-            triangle3.status = STARTED
-            triangle3.setAutoDraw(True)
-        
-        # if triangle3 is active this frame...
-        if triangle3.status == STARTED:
-            # update params
-            #color = random() - 1
-            #triangle3.setFillColor([color, color, color], log=False)
-            #triangle3.setLineColor([color, color, color], log=False)
-            triangle3.setPos((mouse.getPos()[0] - 1, mouse.getPos()[1]), log=False)
-        
-        # *triangle4* updates
-        
-        # if triangle4 is starting this frame...
-        if triangle4.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
-            # keep track of start time/frame for later
-            triangle4.frameNStart = frameN  # exact frame index
-            triangle4.tStart = t  # local t and not account for scr refresh
-            triangle4.tStartRefresh = tThisFlipGlobal  # on global time
-            win.timeOnFlip(triangle4, 'tStartRefresh')  # time at next scr refresh
-            # add timestamp to datafile
-            thisExp.timestampOnFlip(win, 'triangle4.started')
-            # update status
-            triangle4.status = STARTED
-            triangle4.setAutoDraw(True)
-        
-        # if triangle4 is active this frame...
-        if triangle4.status == STARTED:
-            # update params
-            #color = random() - 1
-            #triangle4.setFillColor([color, color, color], log=False)
-            #triangle4.setLineColor([color, color, color], log=False)
-            triangle4.setPos((mouse.getPos()[0] - offset, mouse.getPos()[1] + offset), log=False)
-        
-        # *triangle5* updates
-        
-        # if triangle5 is starting this frame...
-        if triangle5.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
-            # keep track of start time/frame for later
-            triangle5.frameNStart = frameN  # exact frame index
-            triangle5.tStart = t  # local t and not account for scr refresh
-            triangle5.tStartRefresh = tThisFlipGlobal  # on global time
-            win.timeOnFlip(triangle5, 'tStartRefresh')  # time at next scr refresh
-            # add timestamp to datafile
-            thisExp.timestampOnFlip(win, 'triangle5.started')
-            # update status
-            triangle5.status = STARTED
-            triangle5.setAutoDraw(True)
-        
-        # if triangle5 is active this frame...
-        if triangle5.status == STARTED:
-            # update params
-            #color = random() - 1
-            #triangle5.setFillColor([color, color, color], log=False)
-            #triangle5.setLineColor([color, color, color], log=False)
-            triangle5.setPos((mouse.getPos()[0], mouse.getPos()[1] + 1), log=False)
-        
-        # *triangle6* updates
-        
-        # if triangle6 is starting this frame...
-        if triangle6.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
-            # keep track of start time/frame for later
-            triangle6.frameNStart = frameN  # exact frame index
-            triangle6.tStart = t  # local t and not account for scr refresh
-            triangle6.tStartRefresh = tThisFlipGlobal  # on global time
-            win.timeOnFlip(triangle6, 'tStartRefresh')  # time at next scr refresh
-            # add timestamp to datafile
-            thisExp.timestampOnFlip(win, 'triangle6.started')
-            # update status
-            triangle6.status = STARTED
-            triangle6.setAutoDraw(True)
-        
-        # if triangle6 is active this frame...
-        if triangle6.status == STARTED:
-            # update params
-            #color = random() - 1
-            #triangle6.setFillColor([color, color, color], log=False)
-            #triangle6.setLineColor([color, color, color], log=False)
-            triangle6.setPos((mouse.getPos()[0] + offset, mouse.getPos()[1] + offset), log=False)
-        
-        # *triangle7* updates
-        
-        # if triangle7 is starting this frame...
-        if triangle7.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
-            # keep track of start time/frame for later
-            triangle7.frameNStart = frameN  # exact frame index
-            triangle7.tStart = t  # local t and not account for scr refresh
-            triangle7.tStartRefresh = tThisFlipGlobal  # on global time
-            win.timeOnFlip(triangle7, 'tStartRefresh')  # time at next scr refresh
-            # add timestamp to datafile
-            thisExp.timestampOnFlip(win, 'triangle7.started')
-            # update status
-            triangle7.status = STARTED
-            triangle7.setAutoDraw(True)
-        
-        # if triangle7 is active this frame...
-        if triangle7.status == STARTED:
-            # update params
-            #color = random() - 1
-            #triangle7.setFillColor([color, color, color], log=False)
-            #triangle7.setLineColor([color, color, color], log=False)
-            triangle7.setPos((mouse.getPos()[0] + 1, mouse.getPos()[1]), log=False)
-        
-        # *triangle8* updates
-        
-        # if triangle8 is starting this frame...
-        if triangle8.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
-            # keep track of start time/frame for later
-            triangle8.frameNStart = frameN  # exact frame index
-            triangle8.tStart = t  # local t and not account for scr refresh
-            triangle8.tStartRefresh = tThisFlipGlobal  # on global time
-            win.timeOnFlip(triangle8, 'tStartRefresh')  # time at next scr refresh
-            # add timestamp to datafile
-            thisExp.timestampOnFlip(win, 'triangle8.started')
-            # update status
-            triangle8.status = STARTED
-            triangle8.setAutoDraw(True)
-        
-        # if triangle8 is active this frame...
-        if triangle8.status == STARTED:
-            # update params
-            #color = random() - 1
-            #triangle8.setFillColor([color, color, color], log=False)
-            #triangle8.setLineColor([color, color, color], log=False)
-            triangle8.setPos((mouse.getPos()[0] + offset, mouse.getPos()[1] - offset), log=False)
+                triangle.setPos((mouse.getPos()[0], mouse.getPos()[1]), log=False)
             
         # *cursor* updates
         
         # if cursor is starting this frame...
         if cursor.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
-            # keep track of start time/frame for later
-            cursor.frameNStart = frameN  # exact frame index
-            cursor.tStart = t  # local t and not account for scr refresh
-            cursor.tStartRefresh = tThisFlipGlobal  # on global time
-            win.timeOnFlip(cursor, 'tStartRefresh')  # time at next scr refresh
-            # add timestamp to datafile
-            thisExp.timestampOnFlip(win, 'cursor.started')
-            # update status
-            cursor.status = STARTED
-            cursor.setAutoDraw(True)
-        
+            initializeStim(cursor, "cursor")
+            
         # if cursor is active this frame...
         if cursor.status == STARTED:
             # update params

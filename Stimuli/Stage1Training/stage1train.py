@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 This experiment was created using PsychoPy3 Experiment Builder (v2024.2.4),
-    on January 23, 2025, at 20:54
+    on January 27, 2025, at 17:19
 If you publish work using this script the most relevant publication is:
 
     Peirce J, Gray JR, Simpson S, MacAskill M, Höchenberger R, Sogo H, Kastman E, Lindeløv JK. (2019) 
@@ -40,7 +40,7 @@ deviceManager = hardware.DeviceManager()
 _thisDir = os.path.dirname(os.path.abspath(__file__))
 # store info about the experiment session
 psychopyVersion = '2024.2.4'
-expName = 'seizuremachine'  # from the Builder filename that created this script
+expName = 'stage1train'  # from the Builder filename that created this script
 # information about this experiment
 expInfo = {
     'participant': f"{randint(0, 999999):06.0f}",
@@ -59,7 +59,7 @@ or run the experiment with `--pilot` as an argument. To change what pilot
 # work out from system args whether we are running in pilot mode
 PILOTING = core.setPilotModeFromArgs()
 # start off with values from experiment settings
-_fullScr = True
+_fullScr = False
 _winSize = (800, 800)
 # if in pilot mode, apply overrides according to preferences
 if PILOTING:
@@ -126,7 +126,7 @@ def setupData(expInfo, dataDir=None):
     thisExp = data.ExperimentHandler(
         name=expName, version='',
         extraInfo=expInfo, runtimeInfo=None,
-        originPath='C:\\Users\\legions\\Documents\\Davis\\Neurotech Club\\NeuroVision\\seizuremachine.py',
+        originPath='.\\stage1train.py',
         savePickle=True, saveWideText=True,
         dataFileName=dataDir + os.sep + filename, sortColumns='time'
     )
@@ -195,7 +195,7 @@ def setupWindow(expInfo=None, win=None):
         win = visual.Window(
             size=_winSize, fullscr=_fullScr, screen=0,
             winType='pyglet', allowGUI=False, allowStencil=False,
-            monitor='testMonitor', color=[0,0,0], colorSpace='rgb',
+            monitor='testMonitor', color=[-1,-1,-1], colorSpace='rgb',
             backgroundImage='', backgroundFit='none',
             blendMode='avg', useFBO=True,
             units='height',
@@ -313,6 +313,10 @@ def pauseExperiment(thisExp, win=None, timers=[], playbackComponents=[]):
     for timer in timers:
         timer.addTime(-pauseTimer.getTime())
 
+def loadWhiteNoise(fileName):
+    return np.load(fileName, allow_pickle=True)
+
+selectedTargets = []
 
 def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
     """
@@ -362,13 +366,6 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
     # Start Code - component code to be run after the window creation
     
     # --- Initialize components for Routine "trial" ---
-    triangle1 = visual.ShapeStim(
-        win=win, name='triangle1',
-        size=(0.5, 0.5), vertices='triangle',
-        ori=0.0, pos=[0,0], draggable=True, anchor='center',
-        lineWidth=1.0,
-        colorSpace='rgb', lineColor='white', fillColor='white',
-        opacity=None, depth=0.0, interpolate=True)
     mouse = event.Mouse(win=win)
     x, y = [None, None]
     mouse.mouseClock = core.Clock()
@@ -377,8 +374,39 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
         size=(0.0125, 0.0125), vertices='circle',
         ori=0.0, pos=[0,0], draggable=False, anchor='center',
         lineWidth=1.0,
-        colorSpace='rgb', lineColor='white', fillColor=[1.0000, -1.0000, -1.0000],
-        opacity=None, depth=-2.0, interpolate=True)
+        colorSpace='rgb', lineColor=[1.0, -1.0, -1.0], fillColor=[1.0000, -1.0000, -1.0000],
+        opacity=None, depth=-10.0, interpolate=True)
+        
+    triangles = []
+    targets = []
+    targetTimesRemaining = [6, 6, 6, 6, 6, 6, 6, 6]
+    width = 2 * sin(45)
+    for i in range(8):
+        triangles.append(visual.ShapeStim(win=win, name='triangle'+str(i), size=(width, 2), vertices='triangle', ori=i*45, pos=[0,0], draggable=True, anchor='top',
+        lineWidth=1.0, colorSpace='rgb', lineColor='white', fillColor='white', opacity=None, depth=-2.0, interpolate=True))
+        
+        # Calculate position of target
+        angle = deg2rad(i * 45)
+        x = 1/3 * cos(angle)
+        y = 1/3 * sin(angle)
+        
+        targets.append(visual.ShapeStim(win=win, name='cursor', size=(0.1, 0.1), vertices='circle', ori=0, pos=[x,y], draggable=False, anchor='center',
+        lineWidth=1.0, colorSpace='rgb', lineColor=[-1.0, 1.0, -1.0], fillColor=[-1.0, 1.0, -1.0], opacity=0, depth=-10.0, interpolate=True))
+    
+    startExperiment = False
+    
+    # Make this more modular and stuff
+    def initializeStim(stim, name):
+        # keep track of start time/frame for later
+        stim.frameNStart = frameN  # exact frame index
+        stim.tStart = t  # local t and not account for scr refresh
+        stim.tStartRefresh = tThisFlipGlobal  # on global time
+        win.timeOnFlip(triangle, 'tStartRefresh')  # time at next scr refresh
+        # add timestamp to datafile
+        thisExp.timestampOnFlip(win, name + '.started')
+        # update status
+        stim.status = STARTED
+        stim.setAutoDraw(True)
     
     # create some handy timers
     
@@ -412,7 +440,7 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
     # create an object to store info about Routine trial
     trial = data.Routine(
         name='trial',
-        components=[triangle1, mouse, cursor],
+        components=[mouse, cursor],
     )
     trial.status = NOT_STARTED
     continueRoutine = True
@@ -445,6 +473,8 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
     _timeToFirstFrame = win.getFutureFlipTime(clock="now")
     frameN = -1
     
+    noiseSequence = loadWhiteNoise("noiseSequences.npy")
+    
     # --- Run Routine "trial" ---
     trial.forceEnded = routineForceEnded = not continueRoutine
     while continueRoutine:
@@ -454,28 +484,6 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
         tThisFlipGlobal = win.getFutureFlipTime(clock=None)
         frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
         # update/draw components on each frame
-        
-        # *triangle1* updates
-        
-        # if triangle1 is starting this frame...
-        if triangle1.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
-            # keep track of start time/frame for later
-            triangle1.frameNStart = frameN  # exact frame index
-            triangle1.tStart = t  # local t and not account for scr refresh
-            triangle1.tStartRefresh = tThisFlipGlobal  # on global time
-            win.timeOnFlip(triangle1, 'tStartRefresh')  # time at next scr refresh
-            # add timestamp to datafile
-            thisExp.timestampOnFlip(win, 'triangle1.started')
-            # update status
-            triangle1.status = STARTED
-            triangle1.setAutoDraw(True)
-        
-        # if triangle1 is active this frame...
-        if triangle1.status == STARTED:
-            # update params
-            color = random()
-            triangle1.setFillColor([color, color, color], log=False)
-            triangle1.setPos((mouse.getPos()[0], mouse.getPos()[1] - 0.25), log=False)
         # *mouse* updates
         
         # if mouse is starting this frame...
@@ -501,25 +509,69 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
             mouse.rightButton.append(buttons[2])
             mouse.time.append(mouse.mouseClock.getTime())
         
-        # *cursor* updates
+        # *triangle1* updates
         
+        offset = sqrt(2)/2
+        
+        # Update triangles
+        for i, triangle in enumerate(triangles):
+            # If triangle is starting
+            if triangle.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+                initializeStim(triangle, "triangle"+str(i))
+            
+            # If triangle is active
+            elif triangle.status == STARTED:
+                noiseFrame = frameN % 60
+                color = noiseSequence[i][noiseFrame][0] - 1
+                triangle.setFillColor([color, color, color], log=False)
+                triangle.setLineColor([color, color, color], log=False)
+                #triangle.setPos((mouse.getPos()[0], mouse.getPos()[1]), log=False) Disabled in training
+        
+        if not startExperiment and defaultKeyboard.getKeys(keyList=["return"]):
+            print("start experiment")
+            startExperiment = True
+            frameN = 0
+        
+        # Target selection logic
+        if not startExperiment:
+            selectedTarget = -1
+        if startExperiment and frameN % 60 == 0: # every second after started
+            targetsToPick = []
+            for i in range(8):
+                if targetTimesRemaining[i] > 0:
+                    targetsToPick.append(i)
+            if len(targetsToPick) == 0: # If there are no more targets the experiment is over
+                endExperiment(thisExp, win)
+            else:
+                selectedTarget = targetsToPick[randint(0, high=len(targetsToPick))]
+                selectedTargets.append(selectedTarget)
+                targetTimesRemaining[selectedTarget] -= 1
+        
+        # Update targets
+        for i, target in enumerate(targets):
+            # If target is starting
+            if target.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
+                initializeStim(target, "target"+str(i))
+            
+            # If target is active
+            elif target.status == STARTED:
+                if i == selectedTarget:
+                    target.setOpacity(0.25)
+                else:
+                    target.setOpacity(0)
+            
+        # *cursor* updates
+
         # if cursor is starting this frame...
         if cursor.status == NOT_STARTED and tThisFlip >= 0.0-frameTolerance:
-            # keep track of start time/frame for later
-            cursor.frameNStart = frameN  # exact frame index
-            cursor.tStart = t  # local t and not account for scr refresh
-            cursor.tStartRefresh = tThisFlipGlobal  # on global time
-            win.timeOnFlip(cursor, 'tStartRefresh')  # time at next scr refresh
-            # add timestamp to datafile
-            thisExp.timestampOnFlip(win, 'cursor.started')
-            # update status
-            cursor.status = STARTED
-            cursor.setAutoDraw(True)
-        
+            initializeStim(cursor, "cursor")
+            
         # if cursor is active this frame...
         if cursor.status == STARTED:
             # update params
-            cursor.setPos([mouse.getPos()], log=False)
+            #cursor.setPos([mouse.getPos()], log=False) Disabled for training
+            pass
+        
         
         # check for quit (typically the Esc key)
         if defaultKeyboard.getKeys(keyList=["escape"]):
@@ -556,10 +608,6 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
     for thisComponent in trial.components:
         if hasattr(thisComponent, "setAutoDraw"):
             thisComponent.setAutoDraw(False)
-    # store stop times for trial
-    trial.tStop = globalClock.getTime(format='float')
-    trial.tStopRefresh = tThisFlipGlobal
-    thisExp.addData('trial.stopped', trial.tStop)
     # store data for thisExp (ExperimentHandler)
     thisExp.addData('mouse.x', mouse.x)
     thisExp.addData('mouse.y', mouse.y)
@@ -567,6 +615,10 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
     thisExp.addData('mouse.midButton', mouse.midButton)
     thisExp.addData('mouse.rightButton', mouse.rightButton)
     thisExp.addData('mouse.time', mouse.time)
+    # store stop times for trial
+    trial.tStop = globalClock.getTime(format='float')
+    trial.tStopRefresh = tThisFlipGlobal
+    thisExp.addData('trial.stopped', trial.tStop)
     thisExp.nextEntry()
     # the Routine "trial" was not non-slip safe, so reset the non-slip timer
     routineTimer.reset()
@@ -589,6 +641,10 @@ def saveData(thisExp):
     # these shouldn't be strictly necessary (should auto-save)
     thisExp.saveAsWideText(filename + '.csv', delim='auto')
     thisExp.saveAsPickle(filename)
+    
+    with open("stimuli_indices.log", 'w', newline='') as file:
+        file.write(','.join(map(str, selectedTargets)))
+        file.close()
 
 
 def endExperiment(thisExp, win=None):
