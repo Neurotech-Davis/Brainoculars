@@ -1,1 +1,0 @@
-Noise sequence should be placed in the directory of any stimuli you run
