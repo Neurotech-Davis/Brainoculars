@@ -1,0 +1,16 @@
+5.7149 	INFO 	Loaded monitor calibration from ['2025_01_16 16:08']
+6.0584 	EXP 	Created window1 = Window(allowGUI=False, allowStencil=False, autoLog=True, backendConf=UNKNOWN, backgroundFit=<method-wrapper '__getattribute__' of attributeSetter object at 0x00000231406987F0>, backgroundImage=<method-wrapper '__getattribute__' of attributeSetter object at 0x0000023140698790>, bitsMode=UNKNOWN, blendMode='avg', bpc=(8, 8, 8), color=array([-1, -1, -1]), colorSpace='rgb', depthBits=8, fullscr=False, gamma=None, gammaErrorPolicy='raise', infoMsg=UNKNOWN, lms=UNKNOWN, monitor=<psychopy.monitors.calibTools.Monitor object at 0x000002314076C520>, multiSample=False, name='window1', numSamples=2, pos=[880.0, 400.0], screen=0, size=array([800, 800]), stencilBits=0, stereo=False, title='PsychoPy', units='height', useFBO=True, useRetina=False, viewOri=0.0, viewPos=None, viewScale=None, waitBlanking=True, winType='pyglet')
+6.0585 	EXP 	window1: backgroundImage = ''
+6.0585 	EXP 	window1: backgroundFit = 'none'
+6.1082 	EXP 	window1: Attempting to measure frame rate of screen (0) ...
+6.1082 	EXP 	window1: recordFrameIntervals = False
+6.2799 	EXP 	window1: recordFrameIntervals = True
+6.4630 	EXP 	Screen (0) actual frame rate measured at 59.60Hz
+6.4630 	EXP 	window1: recordFrameIntervals = False
+6.4697 	WARNING 	launchHubServer: If using the iohub mouse or eyetracker devices, fullScr should be True.
+9.5779 	INFO 	keyboard.Keyboard is using iohub backend.
+9.5779 	EXP 	seizuremachine: status = STARTED
+9.5829 	EXP 	Created cursor = ShapeStim(__class__=<class 'psychopy.visual.shape.ShapeStim'>, anchor=('center', 'center'), autoDraw=False, autoLog=True, closeShape=True, color=method-wrapper(...), colorSpace='rgb', contrast=None, depth=-10.0, draggable=False, fillColor=array([ 1., -1., -1.]), fillColorSpace='rgb', fillRGB=array([ 1., -1., -1.]), interpolate=True, lineColor=array([ 1., -1., -1.]), lineColorSpace='rgb', lineRGB=array([ 1., -1., -1.]), lineWidth=1.0, name='cursor', opacity=1, ori=0.0, pos=array([0., 0.]), size=array([0.0125, 0.0125]), units='height', vertices=ndarray(...), win=Window(...), windingRule=None)
+9.5845 	EXP 	Created triangle0 = ShapeStim(__class__=<class 'psychopy.visual.shape.ShapeStim'>, anchor=('center', 'top'), autoDraw=False, autoLog=True, closeShape=True, color=method-wrapper(...), colorSpace='rgb', contrast=None, depth=-2.0, draggable=True, fillColor=array([1, 1, 1]), fillColorSpace='rgb', fillRGB=array([1, 1, 1]), interpolate=True, lineColor=array([1., 1., 1.]), lineColorSpace='rgb', lineRGB=array([1, 1, 1]), lineWidth=1.0, name='triangle0', opacity=1, ori=0.0, pos=array([0., 0.]), size=array([2., 2.]), units='height', vertices=ndarray(...), win=Window(...), windingRule=None)
+9.6308 	INFO 	saved data to C:\Users\legions\Documents\Davis\Neurotech Club\NeuroVision\data/269185_seizuremachine_2025-01-31_17h17.51.560.psydat
+9.6318 	INFO 	saved data to 'C:\\Users\\legions\\Documents\\Davis\\Neurotech Club\\NeuroVision\\data/269185_seizuremachine_2025-01-31_17h17.51.560.csv'
