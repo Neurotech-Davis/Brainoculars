@@ -1,6 +1,9 @@
 import argparse
 import time
 import keyboard
+import csv
+import os
+import sys
 
 import serial.tools.list_ports
 from brainflow.board_shim import BoardShim, BrainFlowInputParams, BoardIds, BrainFlowPresets
@@ -41,7 +44,13 @@ def find_cyton_port():
 def main():
     # Setup Arguments that Specify which Training Stimuli is Being Used
     args = file_args()
-    
+
+    # Directory/File Initializations
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    stimuli_indices_log = os.path.join(script_dir, "stimuli_indices.log")
+    session_date_time = time.strftime("%Y-%m-%d_%H-%M-%S", time.localtime())
+    raw_data_path = None            # File where raw data will be written to
+
     # Determine the Settings for the Selected Training
     expected_wait_time = 0
     expected_targets = 0
@@ -50,11 +59,13 @@ def main():
         print("Training Stage 1 selected")
         expected_targets = 8        # 8 stimuli targets
         expected_wait_time = 48     # 1 second trials for each target (each displayed 6 times)
+        raw_data_path = os.path.join(script_dir, "Stage1RawData", f"{session_date_time}.txt")   # Raw data file saved in Stage1RawData directory
     elif args.train2:
         # Training Stage II Settings
         print("Training Stage 2 selected")
         expected_targets = 32       # 32 stimuli targets
         expected_wait_time = 192    # 1 second trials for each target (each displayed 6 times)
+        raw_data_path = os.path.join(script_dir, "Stage2RawData", f"{session_date_time}.txt")   # Raw data file saved in Stage2RawData directory
     
     samples_to_collect = 250 * expected_wait_time   # 250 Hz Sampling Rate for Expected Time
 
@@ -84,13 +95,30 @@ def main():
 
     except RuntimeError as e:
         print("USB Connection Error: ", e)
+        os._exit(1)
     except Exception as e:
         print("Brainflow Error:", e)
+        os._exit(1)
     finally:
-        # f = open("./Stage1RawData/test.txt", "w")
-        # f.write(", ".join(map(str, eeg_data)))
-        # f.close()
-        pass
+
+        time.sleep(1)   # Wait to ensure target display order has been logged
+
+        # Read the Targets from the Log into an Ordered List
+        stimuli_indices = []
+        with open(stimuli_indices_log, 'r') as file:
+            csv_reader = csv.reader(file)
+            for row in csv_reader:
+                for value in row:
+                    stimuli_indices.append(value)
+
+        # Write Raw Data to a File
+        eeg_data_transposed = eeg_data.T        # Transposesd eeg data
+        with open(raw_data_path, "w", newline='') as file:
+            writer = csv.writer(file)           # Write the ordered indices to the top of the file
+            writer.writerow(stimuli_indices)
+            for sample in eeg_data_transposed: # Write each sample as a new line (eeg channels are the columns)
+                writer.writerow(sample.tolist())
+
 
 if __name__ == '__main__':
     main()
