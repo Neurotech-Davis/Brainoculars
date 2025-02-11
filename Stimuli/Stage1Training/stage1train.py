@@ -644,7 +644,9 @@ def saveData(thisExp):
     thisExp.saveAsWideText(filename + '.csv', delim='auto')
     thisExp.saveAsPickle(filename)
     
-    with open("stimuli_indices.log", 'w', newline='') as file:
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    stimuli_indices_log = os.path.join(script_dir, "../../Training", "stimuli_indices.log")
+    with open(stimuli_indices_log, 'w', newline='') as file:
         file.write(','.join(map(str, selectedTargets)))
         file.close()
 
