@@ -83,8 +83,8 @@ def main():
 
         # Wait until Key-Press to Trigger Timer for Data Collection
         # The Stimuli File will Also be Triggered Independently with this Same Key-Press
-        print("Hit \"space\" to begin stimuli and data collection. Make sure to have the stimuli in focus.")
-        keyboard.wait("space")
+        print("Hit \"enter/return\" to begin stimuli and data collection. Make sure to have the stimuli in focus.")
+        keyboard.wait("enter")
         time.sleep(expected_wait_time)
 
         # Get the Last samples_to_collect samples from the Cyton Board Buffer 

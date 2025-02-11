@@ -1,2 +1,5 @@
-#Ignore Logging Files
+# Ignore Logging Files
 Training/stimuli_indices.log
+
+# Ignore Unused PsychoPy Data files
+Stimuli/Stage1Training/data

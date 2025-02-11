@@ -473,7 +473,9 @@ def run(expInfo, thisExp, win, globalClock=None, thisSession=None):
     _timeToFirstFrame = win.getFutureFlipTime(clock="now")
     frameN = -1
     
-    noiseSequence = loadWhiteNoise("noiseSequences.npy")
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    noise_sequence_file = os.path.join(script_dir, "../Generic", "noiseSequences.npy")
+    noiseSequence = loadWhiteNoise(noise_sequence_file)
     
     # --- Run Routine "trial" ---
     trial.forceEnded = routineForceEnded = not continueRoutine
