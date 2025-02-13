@@ -1,6 +1,5 @@
 import argparse
 import time
-#import keyboard
 import csv
 import os
 
@@ -41,7 +40,9 @@ def find_cyton_port():
     raise RuntimeError("OpenBCI Cyton board not found. Please check the connection.")
 
 def wait_for_enter():
-    
+    '''
+    Halt the program until the "enter/return" key is pressed.
+    '''
     def on_press(key):
         if key == keyboard.Key.enter:
             print("Enter key pressed!")

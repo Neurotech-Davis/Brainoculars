@@ -27,8 +27,8 @@ they are installed by running ```pip list``` in your terminal.
 If the libraries are not installed, run the commands following them
 * BrainFlow | Version 5.12.1
     - ```pip install brainflow```
-* Keyboard | Version  0.13.5
-    - ```pip install keyboard```
+* pynput | Version  1.7.7
+    - ```pip install pynput```
 * PySerial | Version 3.5
     - ```pip install pyserial```
 
