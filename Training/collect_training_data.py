@@ -1,12 +1,12 @@
 import argparse
 import time
-import keyboard
+#import keyboard
 import csv
 import os
-import sys
 
 import serial.tools.list_ports
 from brainflow.board_shim import BoardShim, BrainFlowInputParams, BoardIds, BrainFlowPresets
+from pynput import keyboard
 
 
 def file_args():
@@ -40,31 +40,39 @@ def find_cyton_port():
             return port.device
     raise RuntimeError("OpenBCI Cyton board not found. Please check the connection.")
 
+def wait_for_enter():
+    
+    def on_press(key):
+        if key == keyboard.Key.enter:
+            print("Enter key pressed!")
+            return False  # Stop the listener
+    
+    # Start listening and block execution until Enter is pressed
+    with keyboard.Listener(on_press=on_press) as listener:
+        listener.join()
+
 
 def main():
     # Setup Arguments that Specify which Training Stimuli is Being Used
     args = file_args()
 
     # Directory/File Initializations
-    script_dir = os.path.dirname(os.path.abspath(__file__))
+    script_dir = os.path.join(os.getcwd(), "Training")
     stimuli_indices_log = os.path.join(script_dir, "stimuli_indices.log")
     session_date_time = time.strftime("%Y-%m-%d_%H-%M-%S", time.localtime())
     raw_data_path = None            # File where raw data will be written to
 
     # Determine the Settings for the Selected Training
     expected_wait_time = 0
-    expected_targets = 0
     if args.train1:
         # Training Stage I Settings
         print("Training Stage 1 selected")
-        expected_targets = 8        # 8 stimuli targets
-        expected_wait_time = 48     # 1 second trials for each target (each displayed 6 times)
+        expected_wait_time = 48     # 1 second trials for 8 targets (each displayed 6 times)
         raw_data_path = os.path.join(script_dir, "Stage1RawData", f"{session_date_time}.txt")   # Raw data file saved in Stage1RawData directory
     elif args.train2:
         # Training Stage II Settings
         print("Training Stage 2 selected")
-        expected_targets = 32       # 32 stimuli targets
-        expected_wait_time = 192    # 1 second trials for each target (each displayed 6 times)
+        expected_wait_time = 192    # 1 second trials for 32 targets (each displayed 6 times)
         raw_data_path = os.path.join(script_dir, "Stage2RawData", f"{session_date_time}.txt")   # Raw data file saved in Stage2RawData directory
     
     samples_to_collect = 250 * expected_wait_time   # 250 Hz Sampling Rate for Expected Time
@@ -84,7 +92,8 @@ def main():
         # Wait until Key-Press to Trigger Timer for Data Collection
         # The Stimuli File will Also be Triggered Independently with this Same Key-Press
         print("Hit \"enter/return\" to begin stimuli and data collection. Make sure to have the stimuli in focus.")
-        keyboard.wait("enter")
+        #keyboard.wait("enter")
+        wait_for_enter()
         time.sleep(expected_wait_time)
 
         # Get the Last samples_to_collect samples from the Cyton Board Buffer 

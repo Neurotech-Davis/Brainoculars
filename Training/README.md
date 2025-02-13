@@ -10,7 +10,7 @@ It is important you follw the below steps carefully.
 5. Connect the OpenBCI Cyton board Dongle the computer conducting this experiment
     - Ensure the dongle switch is set to GPIO6
     - Ensure the Cyton board is powered on and the switch is set to BLE
-6. Enter the command ```python .\Training\collect_training_data.py --train1```
+6. Enter the command ```python ./Training/collect_training_data.py --train1```
 7. If everything is working as expected, you will receive a prompt that you do NOT yet follow.
     - A red LED on the Cyton dongle under TXD indicates it is currently communicating with the board
 8. Go back to the PsychoPy Coder
@@ -25,11 +25,11 @@ It is important you follw the below steps carefully.
 You will need the following modules to properly collect data. Check if 
 they are installed by running ```pip list``` in your terminal.
 If the libraries are not installed, run the commands following them
-* BrainFlow
+* BrainFlow | Version 5.12.1
     - ```pip install brainflow```
-* Keyboard
+* Keyboard | Version  0.13.5
     - ```pip install keyboard```
-* PySerial
+* PySerial | Version 3.5
     - ```pip install pyserial```
 
 You will also need to install the PyschoPy software to display the stimuli.
