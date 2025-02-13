@@ -1,5 +1,9 @@
 # Ignore Logging Files
 Training/stimuli_indices.log
 
+# Ignore EEG Data
+Training/Stage1RawData/*.txt
+Training/Stage2RawData/*.txt
+
 # Ignore Unused PsychoPy Data files
 Stimuli/Stage1Training/data
