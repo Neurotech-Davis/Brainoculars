@@ -58,7 +58,7 @@ def main():
     args = file_args()
 
     # Directory/File Initializations
-    script_dir = os.path.join(os.getcwd(), "Training")
+    script_dir = os.path.dirname(os.path.abspath(__file__))
     stimuli_indices_log = os.path.join(script_dir, "stimuli_indices.log")
     session_date_time = time.strftime("%Y-%m-%d_%H-%M-%S", time.localtime())
     raw_data_path = None            # File where raw data will be written to
@@ -93,7 +93,6 @@ def main():
         # Wait until Key-Press to Trigger Timer for Data Collection
         # The Stimuli File will Also be Triggered Independently with this Same Key-Press
         print("Hit \"enter/return\" to begin stimuli and data collection. Make sure to have the stimuli in focus.")
-        #keyboard.wait("enter")
         wait_for_enter()
         time.sleep(expected_wait_time)
 
