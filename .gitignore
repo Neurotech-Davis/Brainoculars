@@ -7,3 +7,4 @@ Training/Stage2RawData/*.txt
 
 # Ignore Unused PsychoPy Data files
 Stimuli/Stage1Training/data
+Stimuli/Stage2Training/data
